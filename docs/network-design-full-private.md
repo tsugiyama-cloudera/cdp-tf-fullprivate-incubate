@@ -189,24 +189,37 @@ aws-egress/
 ## 5. VPC Peering ルーティング設計
 
 ```mermaid
-flowchart TD
-  IR[Ingress RT]
-  CR[CDP Private RT]
-  ER[Egress RT]
-  I[Ingress CIDR 10.99.0.0/24]
-  C[CDP CIDR 例: 10.20.0.0/16]
-  E[Egress CIDR 10.98.0.0/24]
+flowchart LR
+  subgraph ingress_vpc["Ingress VPC 10.99.0.0/24"]
+    ingress_rt["Ingress Route Table"]
+    ingress_subnet["Bastion Subnet"]
+    ingress_rt --- ingress_subnet
+  end
 
-  I --> IR
-  C --> CR
-  E --> ER
+  subgraph cdp_vpc["CDP Workload VPC 10.20.0.0/16"]
+    cdp_rt["CDP Private Route Table"]
+    cdp_subnet["Private Subnets"]
+    cdp_rt --- cdp_subnet
+  end
 
-  IR -->|to CDP CIDR via PCX-ING| C
-  CR -->|to Ingress CIDR via PCX-ING| I
+  subgraph egress_vpc["Egress VPC 10.98.0.0/24"]
+    egress_rt["Egress Private Route Table"]
+    egress_subnet["Proxy Subnet"]
+    egress_rt --- egress_subnet
+  end
 
-  ER -->|to CDP CIDR via PCX-EGR| C
-  CR -->|to Egress CIDR via PCX-EGR| E
+  ingress_vpc <-->|"PCX-ING"| cdp_vpc
+  egress_vpc <-->|"PCX-EGR"| cdp_vpc
 ```
+
+Peering 経由で追加するルート（要約）:
+
+| 送信元ルートテーブル | 宛先 CIDR | Peering |
+| --- | --- | --- |
+| Ingress RT | CDP VPC CIDR | PCX-ING |
+| CDP Private RT | `10.99.0.0/24` | PCX-ING |
+| Egress Private RT | CDP VPC CIDR | PCX-EGR |
+| CDP Private RT | `10.98.0.0/24` | PCX-EGR |
 
 - CDP private ルートテーブルに Ingress/Egress 双方への戻り経路を追加する
 - CIDR 重複は禁止（Ingress `10.99.0.0/24`、Egress `10.98.0.0/24`）
