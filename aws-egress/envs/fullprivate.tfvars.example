@@ -1,0 +1,39 @@
+# Copy this file to fullprivate.tfvars and set values.
+
+env_prefix   = "ntt-poc"
+aws_region   = "ap-northeast-1"
+egress_profile = "cloudera-cdp-20250901"
+
+availability_zone = "ap-northeast-1a"
+
+egress_vpc_cidr            = "10.98.0.0/24"
+egress_public_subnet_cidr  = "10.98.0.0/28"
+egress_private_subnet_cidr = "10.98.0.16/28"
+
+proxy_instance_type = "t3.small"
+proxy_port          = 3128
+# Optional fixed IP in egress_private_subnet_cidr. If omitted, subnet +2 is used.
+# proxy_private_ip   = "10.98.0.18"
+
+# Values from aws/ deployment outputs and network settings
+peer_vpc_id                  = "vpc-xxxxxxxxxxxxxxxxx"
+peer_vpc_cidr                = "10.20.0.0/16"
+peer_private_route_table_name = "rt-ntt-poc-private"
+
+# Optional: override whitelist if needed
+# allowed_fqdns = [
+#   "api.ap-1.cdp.cloudera.com",
+#   "*.v2.ccm.ap-1.cdp.cloudera.com",
+#   "github.com",
+#   "api.ngc.nvidia.com",
+#   "files.ngc.nvidia.com",
+#   "xfiles.ngc.nvidia.com",
+#   "prod.otel.kaizen.nvidia.com",
+#   "nvcr.io",
+# ]
+
+env_tags = {
+  owner   = "zzeng"
+  project = "ntt-poc-egress"
+  enddate = "30082026"
+}
