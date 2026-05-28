@@ -1,0 +1,24 @@
+# aws-init/ 向け: フルプライベート用 tfvars テンプレート
+# 使い方:
+# 1) 本ファイルを aws-init/envs/ 配下へコピー
+# 2) <ENTER_...> を環境に合わせて置換
+# 3) terraform apply -var-file=envs/<your-file>.tfvars
+
+env_prefix = "<ENTER_ENV_PREFIX>"
+aws_region = "<ENTER_AWS_REGION>"
+
+deployment_template = "private"
+
+private_network_extensions = false
+create_vpc_endpoints       = true
+
+ingress_extra_cidrs_and_ports = {
+  cidrs = ["10.99.0.0/24"]
+  ports = [22, 443]
+}
+
+# env_tags = {
+#   owner   = "<ENTER_OWNER>"
+#   project = "<ENTER_PROJECT>"
+#   enddate = "<YYYYMMDD>"
+# }

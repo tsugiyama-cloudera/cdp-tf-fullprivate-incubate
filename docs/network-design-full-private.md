@@ -14,6 +14,7 @@
 - `aws` 配下の既存 `.tf` は**変更しない**
 - ネットワーク変更は Terraform 変数で調整可能な範囲に留める
 - 追加実装は以下に限定する
+  - `aws-init` で VPC / IAM / S3 等の基盤を先行作成
   - `aws` 用 `tfvars` テンプレート追加（`docs` 配下）
   - `aws-ingress` の既存実装を前提にした利用手順・接続設計
   - 新規 `aws-egress` フォルダでの Egress VPC / Proxy / Peering 実装
@@ -229,13 +230,13 @@ Peering 経由で追加するルート（要約）:
 
 ### 6.1 デプロイ順序
 
-1. `aws`（CDP Workload）を private テンプレートで作成
+1. `aws-init` で VPC / IAM / S3 等の基盤を作成
 2. `aws-ingress` を適用し CDP VPC と peering
 3. `aws-egress` を新規作成し CDP VPC と peering
 4. CDP Management Console の `Shared Resources > Proxies` で Egress Proxy を登録
-5. 環境登録時に Proxy Configuration を関連付ける（または CLI の `--proxy-config-name` を使用）
+5. `aws` で CDP Workload Environment を作成（`proxy_config_name` 指定、`aws-init` state を参照）
 6. 必要に応じて Data Services 側でも Proxy 設定を有効化する
-7. 接続性試験（Control Plane, S3, GitHub など）を実施
+7. 接続性試験（Control Plane, S3, GitHub, NGC など）を実施
 
 ### 6.2 接続テスト観点
 
@@ -264,4 +265,5 @@ Peering 経由で追加するルート（要約）:
 ## 9. 成果物
 
 - ネットワーク設計書: `docs/network-design-full-private.md`
-- CDP private 用 tfvars テンプレート: `docs/aws-private.tfvars.template`
+- 基盤用 tfvars テンプレート: `docs/aws-init-private.tfvars.template`
+- CDP環境用 tfvars テンプレート: `docs/aws-private.tfvars.template`

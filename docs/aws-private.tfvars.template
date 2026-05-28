@@ -1,46 +1,24 @@
-# CDP Workload Environment (aws/) 向け: フルプライベート用 tfvars テンプレート
+# aws/ 向け: CDP Environment 作成用 tfvars テンプレート（aws-init 完了後に利用）
 # 使い方:
-# 1) 本ファイルを aws/ 配下へコピーして terraform.tfvars として利用
+# 1) 本ファイルを aws/ 配下へコピー
 # 2) <ENTER_...> を環境に合わせて置換
+# 3) aws-egress 構築と MC Proxy 登録を完了してから apply
 
-# ------- Global settings -------
-env_prefix = "<ENTER_ENV_PREFIX>" # 例: cdpfp01
+env_prefix = "<ENTER_ENV_PREFIX>"
+aws_region = "<ENTER_AWS_REGION>"
 
-# ------- Cloud settings -------
-aws_region = "<ENTER_AWS_REGION>" # 例: ap-northeast-1
-
-# ------- CDP environment deployment -------
 deployment_template = "private"
 
-# ------- Full-private networking -------
-# private template で public subnet / NAT 拡張を作らない
+# aws-init で false にした場合、MC 登録済み Proxy 名を必須設定
+proxy_config_name = "<ENTER_PROXY_CONFIG_NAME>"
+
+# aws-init の private_network_extensions と同じ値（バリデーション用）
 private_network_extensions = false
 
-# Private 接続で必要となる VPC Endpoints は有効化推奨
-create_vpc_endpoints = true
-
-# Ingress VPC (10.99.0.0/24) から必要ポートのみ許可
-ingress_extra_cidrs_and_ports = {
-  cidrs = ["10.99.0.0/24"]
-  ports = [22, 443]
-}
-
-# ------- Optional tagging -------
 # env_tags = {
 #   owner   = "<ENTER_OWNER>"
 #   project = "<ENTER_PROJECT>"
 #   enddate = "<YYYYMMDD>"
 # }
 
-# ------- Optional keypair -------
-# 既存キーを使う場合のみ指定。未指定時は aws/ 側で自動生成。
-# aws_key_pair = "<ENTER_EXISTING_KEYPAIR_NAME>"
-
-# ------- Optional BYO-VPC -------
-# create_vpc            = false
-# cdp_vpc_id            = "<ENTER_EXISTING_VPC_ID>"
-# cdp_public_subnet_ids = []
-# cdp_private_subnet_ids = [
-#   "<ENTER_PRIVATE_SUBNET_ID_1>",
-#   "<ENTER_PRIVATE_SUBNET_ID_2>"
-# ]
+# init_state_path = "../aws-init/terraform.tfstate"

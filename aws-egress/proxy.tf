@@ -91,9 +91,11 @@ resource "aws_instance" "proxy" {
     acl CONNECT method CONNECT
 
     acl allowed_domains dstdomain "/etc/squid/allowed_domains.txt"
+    acl allowed_server_names ssl::server_name "/etc/squid/allowed_domains.txt"
 
     http_access deny !Safe_ports
     http_access deny CONNECT !SSL_ports
+    http_access allow CONNECT allowed_server_names
     http_access allow allowed_domains
     http_access deny all
 
