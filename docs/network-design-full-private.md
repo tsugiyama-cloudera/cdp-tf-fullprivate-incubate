@@ -34,7 +34,7 @@ flowchart LR
 
   U -->|SSM StartSession| SSM
   SSM --> Bastion
-  U -->|SSH SOCKS (localhost:1090)| Bastion
+  U -->|SSH SOCKS localhost-1090| Bastion
   Bastion <-->|VPC Peering| WVPC
   WVPC <-->|VPC Peering| EVPC
   EVPC --> EG
