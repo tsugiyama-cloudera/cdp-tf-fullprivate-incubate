@@ -9,8 +9,12 @@
 # ops_vpc_cidr     = "10.99.0.0/24"
 # ops_subnet_cidr  = "10.99.0.0/28"
 
-# peer_vpc_id      = "vpc-0ec7e6b20176438c6"   # NTT-PoC CDP VPC
+# peer_vpc_id      = "vpc-0ec7e6b20176438c6"   # aws-init の aws_vpc_id
 # peer_vpc_cidr    = "10.20.0.0/16"
+# peer_private_route_table_ids は省略可（../aws-init/terraform.tfstate から自動取得）
+
+# aws-init の <env_prefix>-keypair と同一（必須。未指定時は ntt-poc-keypair）
+# bastion_key_name = "ntt-poc-keypair"
 
 # bastion_instance_type = "t3.small"
 

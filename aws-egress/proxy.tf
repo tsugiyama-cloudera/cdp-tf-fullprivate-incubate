@@ -49,6 +49,10 @@ resource "aws_security_group" "proxy" {
   tags = { Name = "${var.env_prefix}-egress-proxy-sg" }
 }
 
+resource "terraform_data" "allowed_fqdns_revision" {
+  input = md5(join("\n", sort(local.normalized_allowed_fqdns)))
+}
+
 resource "aws_instance" "proxy" {
   ami                    = data.aws_ami.al2023.id
   instance_type          = var.proxy_instance_type
@@ -69,6 +73,8 @@ resource "aws_instance" "proxy" {
     volume_size = 20
     encrypted   = true
   }
+
+  user_data_replace_on_change = true
 
   user_data = <<-EOT
     #!/bin/bash
@@ -109,5 +115,12 @@ resource "aws_instance" "proxy" {
 
   tags = {
     Name = "${var.env_prefix}-egress-proxy"
+  }
+
+  lifecycle {
+    # Re-run user_data (Squid allowed_domains.txt) when allowed_fqdns changes.
+    replace_triggered_by = [
+      terraform_data.allowed_fqdns_revision
+    ]
   }
 }

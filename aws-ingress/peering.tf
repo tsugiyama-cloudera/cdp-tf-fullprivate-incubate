@@ -15,11 +15,11 @@ resource "aws_route" "ops_to_cdp" {
   vpc_peering_connection_id = aws_vpc_peering_connection.ops_to_cdp.id
 }
 
-# Route from CDP VPC → ops VPC. Added on CDP-side private route table looked up
-# by Name tag. aws/ uses separate aws_route resources rather than inline `route`
-# blocks inside aws_route_table, so no drift in aws/ state.
+# Route from CDP VPC → ops VPC on each private route table (from aws-init output).
 resource "aws_route" "cdp_to_ops" {
-  route_table_id            = data.aws_route_table.cdp_private.id
+  for_each = toset(local.cdp_private_route_table_ids)
+
+  route_table_id            = each.value
   destination_cidr_block    = var.ops_vpc_cidr
   vpc_peering_connection_id = aws_vpc_peering_connection.ops_to_cdp.id
 }

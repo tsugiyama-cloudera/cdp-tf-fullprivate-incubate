@@ -58,10 +58,10 @@ variable "peer_vpc_cidr" {
   default     = "10.20.0.0/16"
 }
 
-variable "peer_private_route_table_name" {
-  type        = string
-  description = "Name tag of the CDP-side private route table (looked up via data source)."
-  default     = "rt-ntt-poc-private"
+variable "peer_private_route_table_ids" {
+  type        = list(string)
+  description = "CDP VPC private route table IDs for peering routes. If null, read from aws-init remote state."
+  default     = null
 }
 
 variable "env_tags" {

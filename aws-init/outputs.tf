@@ -13,9 +13,9 @@ output "aws_key_pair_name" {
   description = "EC2 key pair name used by CDP nodes"
 }
 
-output "peer_private_route_table_name" {
-  value       = local.private_route_table_name
-  description = "Name tag of CDP private route table (for ingress/egress peering)"
+output "aws_private_route_table_ids" {
+  value       = module.cdp_aws_prereqs.aws_private_route_table_ids
+  description = "CDP VPC private route table IDs (for ingress/egress peering routes)"
 }
 
 output "aws_public_subnet_ids" {

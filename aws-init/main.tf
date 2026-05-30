@@ -94,8 +94,6 @@ locals {
       ports = [443, 22]
     }
   )
-
-  private_route_table_name = "rt-${var.env_prefix}-private"
 }
 
 resource "tls_private_key" "cdp_private_key" {

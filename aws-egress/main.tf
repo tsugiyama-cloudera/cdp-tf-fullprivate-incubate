@@ -19,14 +19,6 @@ provider "aws" {
   }
 }
 
-data "aws_route_table" "cdp_private" {
-  vpc_id = var.peer_vpc_id
-  filter {
-    name   = "tag:Name"
-    values = [var.peer_private_route_table_name]
-  }
-}
-
 data "aws_ami" "al2023" {
   most_recent = true
   owners      = ["amazon"]
@@ -49,8 +41,9 @@ locals {
     replace(replace(replace(lower(trimspace(domain)), "https://", ""), "http://", ""), "*.", ".") :
     replace(replace(lower(trimspace(domain)), "https://", ""), "http://", "")
   ])
-  # Use fixed private IP for stable MC proxy registration.
-  proxy_private_ip        = coalesce(var.proxy_private_ip, cidrhost(var.egress_private_subnet_cidr, 2))
+  # Fixed private IP for stable MC proxy registration.
+  # AWS reserves the first 4 addresses in each subnet (network, router, DNS, future).
+  proxy_private_ip        = coalesce(var.proxy_private_ip, cidrhost(var.egress_private_subnet_cidr, 4))
   mc_proxy_config_name    = "${var.env_prefix}-egress-proxy"
   mc_proxy_no_proxy_hosts = "localhost,127.0.0.1"
 }

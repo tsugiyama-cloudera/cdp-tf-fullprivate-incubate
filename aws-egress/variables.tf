@@ -54,7 +54,7 @@ variable "proxy_port" {
 
 variable "proxy_private_ip" {
   type        = string
-  description = "Fixed private IP for Squid proxy in egress_private_subnet_cidr. If null, deterministic IP is selected from subnet."
+  description = "Fixed private IP for Squid proxy in egress_private_subnet_cidr. If null, the first assignable host in the subnet is used (cidrhost offset 4; AWS reserves offsets 0-3)."
   default     = null
 }
 
@@ -68,10 +68,10 @@ variable "peer_vpc_cidr" {
   description = "CIDR for CDP Workload VPC."
 }
 
-variable "peer_private_route_table_name" {
-  type        = string
-  description = "Name tag of CDP private route table."
-  default     = "rt-ntt-poc-private"
+variable "peer_private_route_table_ids" {
+  type        = list(string)
+  description = "CDP VPC private route table IDs for peering routes. If null, read from aws-init remote state."
+  default     = null
 }
 
 variable "allowed_fqdns" {
@@ -80,7 +80,15 @@ variable "allowed_fqdns" {
   default = [
     "api.ap-1.cdp.cloudera.com",
     "*.v2.ccm.ap-1.cdp.cloudera.com",
+    # Jumpgate relayServer (config.toml) uses account HA host in us-west-1, not ap-1.
+    "*.v2.us-west-1.ccm.cdp.cloudera.com",
     "*.api.monitoring.ap-1.cdp.cloudera.com",
+    # Control Plane / Liftie (us-west-1). Workload region ap-1 but CP APIs use us-west-1.
+    "*.us-west-1.cdp.cloudera.com",
+    "*.monitoring.us-west-1.cdp.cloudera.com",
+    "dbusapi.us-west-1.sigma.altus.cloudera.com",
+    # cfn-signal on EKS workers uses --https-proxy (VPC endpoint bypassed).
+    "cloudformation.ap-northeast-1.amazonaws.com",
     "mow-prod-ap-southeast-2-sigmadbus-dbus.s3.ap-southeast-2.amazonaws.com",
     "mow-prod-ap-southeast-2-sigmadbus-dbus.s3.amazonaws.com",
     "archive.cloudera.com",
@@ -105,6 +113,11 @@ variable "allowed_fqdns" {
     "github.infra.cloudera.com",
     "nodejs.org",
     "iojs.org",
+    "pypi.org",
+    "files.pythonhosted.org",
+    "pypi.python.org",
+    "test.pypi.org",
+    "test-files.pythonhosted.org",
     "bedrock-runtime.ap-northeast-1.amazonaws.com",
     "api.gradio.app",
   ]

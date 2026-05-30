@@ -13,7 +13,9 @@ resource "aws_route" "egress_to_cdp" {
 }
 
 resource "aws_route" "cdp_to_egress" {
-  route_table_id            = data.aws_route_table.cdp_private.id
+  for_each = toset(local.cdp_private_route_table_ids)
+
+  route_table_id            = each.value
   destination_cidr_block    = var.egress_vpc_cidr
   vpc_peering_connection_id = aws_vpc_peering_connection.egress_to_cdp.id
 }

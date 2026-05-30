@@ -90,7 +90,7 @@ flowchart LR
 
 - bastion SG は inbound を開けず、SSM 主体の運用を維持
 - CDP VPC 側 SG/Route で Ingress CIDR からの 22/443 など必要最小限のみ許可
-- オペレータ端末のプロキシ設定手順を運用標準として文書化する
+- オペレータ端末のプロキシ設定手順は [運用者アクセス手順書](operator-access-procedure-full-private.md) を参照
 
 ## 4.3 Egress VPC（`aws-egress` 新規）
 
@@ -147,10 +147,15 @@ aws-egress/
 
 - `api.ap-1.cdp.cloudera.com`
 - `*.v2.ccm.ap-1.cdp.cloudera.com`（静的IP: `3.26.127.64/27`）
+- `*.v2.us-west-1.ccm.cdp.cloudera.com`（Jumpgate `relayServer` の実ホスト。アカウント HA 名は `ha-<account-id>.v2.us-west-1.ccm.cdp.cloudera.com`）
 - `api.ap-1.cdp.cloudera.com`
 - `mow-prod-ap-southeast-2-sigmadbus-dbus.s3.ap-southeast-2.amazonaws.com`
 - `mow-prod-ap-southeast-2-sigmadbus-dbus.s3.amazonaws.com`
 - `*.api.monitoring.ap-1.cdp.cloudera.com`
+- `*.us-west-1.cdp.cloudera.com`（Compute Cluster / Liftie。Control Plane は `us-west-1`）
+- `*.monitoring.us-west-1.cdp.cloudera.com`
+- `dbusapi.us-west-1.sigma.altus.cloudera.com`
+- `cloudformation.ap-northeast-1.amazonaws.com`（EKS ワーカーの `cfn-signal --https-proxy` 用）
 - `archive.cloudera.com`
 - `cloudera-service-delivery-cache.s3.amazonaws.com`
 - `prod-ap-southeast-1-starport-layer-bucket.s3.ap-southeast-1.amazonaws.com`
@@ -173,6 +178,11 @@ aws-egress/
 - `github.infra.cloudera.com`
 - `nodejs.org`
 - `iojs.org`
+- `pypi.org`
+- `files.pythonhosted.org`
+- `pypi.python.org`
+- `test.pypi.org`
+- `test-files.pythonhosted.org`
 - `container.repo.cloudera.com`
 - `bedrock-runtime.<region>.amazonaws.com`
 - `api.gradio.app`
@@ -181,7 +191,7 @@ aws-egress/
 
 - `https://` を含む値は Squid ACL ではホスト形式へ変換して管理する
 - `github.com/cloudera/learning-hub-content` はパス制御を採用せず、`github.com` ドメイン許可のみで運用する
-- CCM v2 経路は `*.v2.ccm.ap-1.cdp.cloudera.com` の FQDN 制御を正とし、`3.26.127.64/27` は参考情報として扱う
+- CCM v2 経路は FQDN 制御を正とする。`ap-1` 向け（`*.v2.ccm.ap-1.cdp.cloudera.com`）に加え、Jumpgate の `relayServer`（`/etc/jumpgate/config.toml`）は **`*.v2.us-west-1.ccm.cdp.cloudera.com`** であることが多い。`3.26.127.64/27` は参考情報として扱う
 - `bedrock-runtime.<region>.amazonaws.com` はデプロイリージョン変数で展開する
 - Proxy Registration は CDP 上で後編集できないため、変更時は再登録を前提とする
 - Proxy Server Host に FQDN を使用する場合は `Inbound Proxy CIDR` の指定が必要となる
@@ -258,7 +268,8 @@ Peering 経由で追加するルート（要約）:
 
 ## 8. 既知課題・確認事項
 
-- CCM v2 経路は FQDN（`*.v2.ccm.ap-1.cdp.cloudera.com`）を正として制御する
+- CCM v2 経路は FQDN 制御を正とする（`ap-1` と Jumpgate relay の `us-west-1` の両方）
+- EKS / EC2 / ECR 等の AWS API は `aws-init` の VPC Endpoint とワーカー `NO_PROXY` で迂回。ただし `cfn-signal --https-proxy` は Squid 許可が必要（`cloudformation.<region>.amazonaws.com`）
 - `github.com/cloudera/learning-hub-content` はパス単位で厳密制御せず、`github.com` ドメイン許可で運用する
 - Egress VPC CIDR は `10.98.0.0/24` で確定する
 

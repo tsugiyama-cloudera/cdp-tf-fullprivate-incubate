@@ -1,0 +1,32 @@
+# aws-ingress/ 向け: フルプライベート用 tfvars テンプレート
+# 使い方:
+# 1) 本ファイルを aws-ingress/envs/ 配下へコピー
+# 2) <ENTER_...> を環境に合わせて置換
+# 3) aws-init 完了後に terraform apply -var-file=envs/<your-file>.tfvars
+
+env_prefix = "<ENTER_ENV_PREFIX>"
+aws_region = "<ENTER_AWS_REGION>"
+
+ops_profile     = "<ENTER_AWS_PROFILE>"
+availability_zone = "<ENTER_AVAILABILITY_ZONE>"
+
+ops_vpc_cidr    = "10.99.0.0/24"
+ops_subnet_cidr = "10.99.0.0/28"
+
+# aws-init の出力を反映（必須）
+peer_vpc_id   = "<ENTER_AWS_VPC_ID>"
+peer_vpc_cidr = "<ENTER_AWS_VPC_CIDR>"
+
+# aws-init の <env_prefix>-keypair と同一にすること（必須。未指定時は ntt-poc-keypair になり SSH 不可）
+bastion_key_name = "<ENTER_ENV_PREFIX>-keypair"
+
+# peer_private_route_table_ids は省略可（../aws-init/terraform.tfstate から自動取得）
+# peer_private_route_table_ids = ["rtb-xxxxxxxxxxxxxxxxx"]
+
+# bastion_instance_type = "t3.small"
+
+# env_tags = {
+#   owner   = "<ENTER_OWNER>"
+#   project = "<ENTER_PROJECT>"
+#   enddate = "<YYYYMMDD>"
+# }

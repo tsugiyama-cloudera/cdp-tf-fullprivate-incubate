@@ -26,16 +26,6 @@ provider "aws" {
   }
 }
 
-# Look up CDP private route table by Name tag (created by aws/ terraform).
-# Used to add the peering route back to ops VPC.
-data "aws_route_table" "cdp_private" {
-  vpc_id = var.peer_vpc_id
-  filter {
-    name   = "tag:Name"
-    values = [var.peer_private_route_table_name]
-  }
-}
-
 data "aws_ami" "al2023" {
   most_recent = true
   owners      = ["amazon"]

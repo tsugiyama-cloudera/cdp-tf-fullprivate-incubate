@@ -21,7 +21,7 @@ terraform apply -var-file=envs/fullprivate-init.tfvars
 
 - `aws_vpc_id`
 - `aws_vpc_cidr`
-- `peer_private_route_table_name`
+- `aws_private_route_table_ids`
 - `aws_key_pair_name`
 
 ```bash
