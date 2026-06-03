@@ -34,6 +34,9 @@ peer_vpc_cidr = "10.20.0.0/16"
 #   "nvcr.io",
 # ]
 
+# Optional: extra hosts appended to MC Proxy "No Proxy Hosts" (terraform output mc_proxy_no_proxy_hosts)
+# mc_proxy_no_proxy_hosts_extra = ["<datalake-bucket>.s3.amazonaws.com"]
+
 env_tags = {
   owner   = "zzeng"
   project = "ntt-poc-egress"

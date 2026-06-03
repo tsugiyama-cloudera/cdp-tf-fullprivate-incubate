@@ -6,6 +6,7 @@
 
 - [ネットワーク設計書](network-design-full-private.md)
 - [構築手順書](deployment-procedure-full-private.md)
+- [Cloudera AI Registry / Model Hub 手順書](ai-registry-full-private.md)（Registry UI・Model Hub API は本書の SOCKS 経由。EKS の `kubectl` は EKS コンソール CloudShell）
 
 ---
 

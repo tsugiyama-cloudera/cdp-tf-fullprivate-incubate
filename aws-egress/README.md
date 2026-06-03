@@ -38,12 +38,18 @@ terraform apply -var-file=envs/fullprivate.tfvars
 
 ```bash
 terraform output mc_proxy_registration
+terraform output -raw knox_jvm_proxy_opts
 ```
+
+`knox_jvm_proxy_opts` は Cloudera AI **Registry および AI Inference**（Compute Cluster）作成後の Knox パッチ（DSE-48642）用 JVM 文字列です。適用手順は `docs/ai-registry-full-private.md`、`docs/ai-inference-full-private.md` および `scripts/patch-ai-registry-knox-proxy.sh` を参照。
+
+`mc_proxy_no_proxy_hosts`（または `terraform output mc_proxy_registration` の `no_proxy_hosts`）は MC Proxy 登録時の **No Proxy Hosts** にそのまま使用します。`localhost,127.0.0.1` のみでは S3 向け通信が Squid 経由になり Model Hub / Model Endpoint が失敗しやすいです。
 
 ## Proxy 登録（Management Console）
 
 - `Shared Resources > Proxies > Create Proxy Configuration` で登録
 - `terraform output mc_proxy_registration` の値を入力
+- **`No Proxy Hosts` には `no_proxy_hosts`（または `terraform output -raw mc_proxy_no_proxy_hosts`）を漏れなく設定** — 詳細は `docs/deployment-procedure-full-private.md` Step 4
 - 登録済み Proxy Configuration は後編集不可のため、変更時は再登録
 
 ## ポリシー方針

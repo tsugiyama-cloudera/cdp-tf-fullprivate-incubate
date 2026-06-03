@@ -136,6 +136,7 @@ aws-egress/
 ### 4.3.4 トラフィック制御
 
 - CDP Management Console の `Shared Resources > Proxies` で Egress Squid を Proxy Configuration として登録して利用する
+- **`No Proxy Hosts` には `aws-egress` の `terraform output -raw mc_proxy_no_proxy_hosts` を漏れなく設定する**（`.amazonaws.com` / `.s3.amazonaws.com` 等。`localhost,127.0.0.1` のみでは Model Hub / AI Inference の S3 取得が Squid 経由で失敗しやすい）。詳細は [構築手順書 Step 4](deployment-procedure-full-private.md#7-step-4-cdp-management-console-で-proxy-登録)
 - 環境登録時は、登録済み Proxy Configuration を選択して Workload Environment に関連付ける
 - Squid ACL は「許可リスト方式（default deny）」
 - TLS は CONNECT トンネルを基本とし、許可対象 FQDN のみ `dstdomain` / `ssl::server_name_regex` で許可
@@ -196,6 +197,7 @@ aws-egress/
 - Proxy Registration は CDP 上で後編集できないため、変更時は再登録を前提とする
 - Proxy Server Host に FQDN を使用する場合は `Inbound Proxy CIDR` の指定が必要となる
 - Data Services（CDE/CDW/CDF/AI）は、環境レベル設定に加えてサービス有効化時の Proxy 設定が別途必要となる
+- Cloudera AI Registry（Model Hub）は非透過プロキシ下で Knox の JVM プロキシ設定（DSE-48642）が Registry 作成後に必要。EKS 操作は AWS EKS コンソールの CloudShell を使用（`docs/ai-registry-full-private.md`）
 
 ## 5. VPC Peering ルーティング設計
 

@@ -128,3 +128,9 @@ variable "env_tags" {
   description = "Additional tags for resources."
   default     = null
 }
+
+variable "mc_proxy_no_proxy_hosts_extra" {
+  type        = list(string)
+  description = "Optional extra No Proxy hosts/CIDRs appended to mc_proxy_registration.no_proxy_hosts (e.g. datalake bucket FQDN if needed)."
+  default     = []
+}
