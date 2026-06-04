@@ -1,0 +1,49 @@
+# aws-egress/ 向け: フルプライベート用 tfvars テンプレート
+# 使い方:
+# 1) 本ファイルを aws-egress/envs/ 配下へコピー
+# 2) <ENTER_...> を環境に合わせて置換
+# 3) aws-init 完了後に terraform apply -var-file=envs/<your-file>.tfvars
+
+env_prefix     = "<ENTER_ENV_PREFIX>"
+aws_region     = "<ENTER_AWS_REGION>"
+egress_profile = "<ENTER_AWS_PROFILE>"
+
+availability_zone = "<ENTER_AVAILABILITY_ZONE>"
+
+egress_vpc_cidr            = "10.98.0.0/24"
+egress_public_subnet_cidr  = "10.98.0.0/28"
+egress_private_subnet_cidr = "10.98.0.16/28"
+
+proxy_instance_type = "t3.small"
+proxy_port          = 3128
+# Optional fixed IP in egress_private_subnet_cidr. If omitted, first assignable host is used (default 10.98.0.20 for 10.98.0.16/28).
+# proxy_private_ip   = "10.98.0.20"
+
+# aws-init の出力を反映（必須）
+peer_vpc_id   = "<ENTER_AWS_VPC_ID>"
+peer_vpc_cidr = "<ENTER_AWS_VPC_CIDR>"
+
+# peer_private_route_table_ids は省略可（../aws-init/terraform.tfstate から自動取得）
+# peer_private_route_table_ids = ["rtb-xxxxxxxxxxxxxxxxx"]
+
+# Optional: override whitelist if needed
+# allowed_fqdns = [
+#   "api.ap-1.cdp.cloudera.com",
+#   "*.v2.ccm.ap-1.cdp.cloudera.com",
+#   "github.com",
+#   "docker.repository.cloudera.com",
+#   "api.ngc.nvidia.com",
+#   "files.ngc.nvidia.com",
+#   "xfiles.ngc.nvidia.com",
+#   "prod.otel.kaizen.nvidia.com",
+#   "nvcr.io",
+# ]
+
+# Optional: extra hosts appended to MC Proxy "No Proxy Hosts" (terraform output mc_proxy_no_proxy_hosts)
+# mc_proxy_no_proxy_hosts_extra = ["<datalake-bucket>.s3.amazonaws.com"]
+
+# env_tags = {
+#   owner   = "<ENTER_OWNER>"
+#   project = "<ENTER_PROJECT>"
+#   enddate = "<YYYYMMDD>"
+# }

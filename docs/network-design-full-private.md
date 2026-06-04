@@ -111,8 +111,9 @@ aws-egress/
   proxy.tf
   peering.tf
   outputs.tf
-  envs/
-    fullprivate.tfvars.example
+  envs/                    # apply 用 tfvars の配置先（git 管理外）
+docs/
+  aws-egress-private.tfvars.template
 ```
 
 ### 4.3.3 Terraform リソース設計（概要）

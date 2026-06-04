@@ -57,7 +57,7 @@ Step 12〜14 の詳細は **[Cloudera AI Inference 手順書](ai-inference-full-
 | --- | --- | --- |
 | Step 1 | `docs/aws-init-private.tfvars.template` | `aws-init/envs/fullprivate-init.tfvars` |
 | Step 2 | `docs/aws-ingress-private.tfvars.template` | `aws-ingress/envs/fullprivate.tfvars` |
-| Step 3 | `aws-egress/envs/fullprivate.tfvars.example` | `aws-egress/envs/fullprivate.tfvars` |
+| Step 3 | `docs/aws-egress-private.tfvars.template` | `aws-egress/envs/fullprivate.tfvars` |
 | Step 5 | `docs/aws-private.tfvars.template` | `aws/fullprivate-prod.tfvars` |
 
 ---
@@ -186,7 +186,7 @@ aws ec2 describe-vpc-peering-connections \
 ### 6.1 tfvars 作成
 
 ```bash
-cp aws-egress/envs/fullprivate.tfvars.example aws-egress/envs/fullprivate.tfvars
+cp docs/aws-egress-private.tfvars.template aws-egress/envs/fullprivate.tfvars
 ```
 
 主な設定（Step 1 の出力を反映）:
@@ -561,5 +561,7 @@ curl -v -x "http://<PROXY_IP>:3128" --connect-timeout 10 \
 - Cloudera AI Registry / Model Hub: `docs/ai-registry-full-private.md`
 - Cloudera AI Inference / Model Endpoint: `docs/ai-inference-full-private.md`
 - 基盤用 tfvars: `docs/aws-init-private.tfvars.template`
+- Ingress 用 tfvars: `docs/aws-ingress-private.tfvars.template`
+- Egress 用 tfvars: `docs/aws-egress-private.tfvars.template`
 - CDP 環境用 tfvars: `docs/aws-private.tfvars.template`
 - `aws-init/README.md` / `aws-egress/README.md`
