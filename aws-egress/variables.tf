@@ -78,48 +78,46 @@ variable "allowed_fqdns" {
   type        = list(string)
   description = "Allowed destinations for proxy egress control."
   default = [
-    "api.ap-1.cdp.cloudera.com",
-    "*.v2.ccm.ap-1.cdp.cloudera.com",
-    # Jumpgate relayServer (config.toml) uses account HA host in us-west-1, not ap-1.
-    "*.v2.us-west-1.ccm.cdp.cloudera.com",
-    "*.api.monitoring.ap-1.cdp.cloudera.com",
-    # Control Plane / Liftie (us-west-1). Workload region ap-1 but CP APIs use us-west-1.
-    "*.us-west-1.cdp.cloudera.com",
-    "*.monitoring.us-west-1.cdp.cloudera.com",
-    "dbusapi.us-west-1.sigma.altus.cloudera.com",
-    # cfn-signal on EKS workers uses --https-proxy (VPC endpoint bypassed).
-    "cloudformation.ap-northeast-1.amazonaws.com",
-    "mow-prod-ap-southeast-2-sigmadbus-dbus.s3.ap-southeast-2.amazonaws.com",
-    "mow-prod-ap-southeast-2-sigmadbus-dbus.s3.amazonaws.com",
-    "archive.cloudera.com",
-    "cloudera-service-delivery-cache.s3.amazonaws.com",
-    "prod-ap-southeast-1-starport-layer-bucket.s3.ap-southeast-1.amazonaws.com",
-    "prod-ap-southeast-1-starport-layer-bucket.s3.amazonaws.com",
-    "s3-r-w.ap-southeast-1.amazonaws.com",
-    "*.execute-api.ap-southeast-1.amazonaws.com",
-    "container.repo.cloudera.com",
-    "container.repository.cloudera.com",
-    "console.ap-1.cdp.cloudera.com",
-    "raw.githubusercontent.com",
-    "github.com",
-    "huggingface.co",
-    "api.ngc.nvidia.com",
-    "files.ngc.nvidia.com",
-    "xfiles.ngc.nvidia.com",
-    "prod.otel.kaizen.nvidia.com",
-    "nvcr.io",
-    "ngc.nvidia.com",
-    "authn.nvidia.com",
-    "github.infra.cloudera.com",
-    "nodejs.org",
-    "iojs.org",
-    "pypi.org",
-    "files.pythonhosted.org",
-    "pypi.python.org",
-    "test.pypi.org",
-    "test-files.pythonhosted.org",
-    "bedrock-runtime.ap-northeast-1.amazonaws.com",
-    "api.gradio.app",
+    "api.ap-1.cdp.cloudera.com",                                      # CDP Control Plane API (ap-1)
+    "*.v2.ccm.ap-1.cdp.cloudera.com",                                 # CCM v2 cluster communication (ap-1)
+    "*.v2.us-west-1.ccm.cdp.cloudera.com",                            # Jumpgate relayServer / CCM v2 HA (us-west-1)
+    "*.api.monitoring.ap-1.cdp.cloudera.com",                         # CDP monitoring APIs (ap-1)
+    "*.us-west-1.cdp.cloudera.com",                                   # Control Plane / Liftie / Compute Cluster APIs (us-west-1)
+    "*.monitoring.us-west-1.cdp.cloudera.com",                        # Control Plane monitoring (us-west-1)
+    "dbusapi.us-west-1.sigma.altus.cloudera.com",                     # Sigma DBus telemetry for Liftie / EKS clusters
+    "cloudformation.ap-northeast-1.amazonaws.com",                    # EKS worker cfn-signal (--https-proxy; VPC endpoint bypassed)
+    "mow-prod-ap-southeast-2-sigmadbus-dbus.s3.ap-southeast-2.amazonaws.com", # Sigma DBus event bus (regional S3)
+    "mow-prod-ap-southeast-2-sigmadbus-dbus.s3.amazonaws.com",        # Sigma DBus event bus (global S3)
+    "archive.cloudera.com",                                           # Cloudera parcels / packages / RPM downloads
+    "cloudera-service-delivery-cache.s3.amazonaws.com",               # Cloudera service delivery cache (S3)
+    "prod-ap-southeast-1-starport-layer-bucket.s3.ap-southeast-1.amazonaws.com", # Starport container layer cache (regional)
+    "prod-ap-southeast-1-starport-layer-bucket.s3.amazonaws.com",     # Starport container layer cache (global)
+    "s3-r-w.ap-southeast-1.amazonaws.com",                            # S3 read/write endpoint for Starport layers
+    "*.execute-api.ap-southeast-1.amazonaws.com",                     # API Gateway for Cloudera delivery services
+    "container.repo.cloudera.com",                                    # Cloudera container registry (legacy hostname)
+    "docker.repository.cloudera.com",                                 # Agent Studio ML Runtime image / CDSW engine images
+    "container.repository.cloudera.com",                              # Cloudera container images (CDSW, Istio sidecar, etc.)
+    "console.ap-1.cdp.cloudera.com",                                  # Cloudera Management Console API (ap-1)
+    "raw.githubusercontent.com",                                      # GitHub raw content (AI Studios catalog, nvm install, AMPs)
+    "github.com",                                                     # GitHub repos (AMPs, AI Studios, runtime config)
+    "huggingface.co",                                                 # Hugging Face model hub (Model Hub import)
+    "api.ngc.nvidia.com",                                             # NVIDIA NGC API (Model Hub)
+    "files.ngc.nvidia.com",                                           # NVIDIA NGC model / artifact downloads
+    "xfiles.ngc.nvidia.com",                                          # NVIDIA NGC extended file downloads
+    "prod.otel.kaizen.nvidia.com",                                    # NVIDIA NGC telemetry (OpenTelemetry)
+    "nvcr.io",                                                        # NVIDIA NGC Container Registry
+    "ngc.nvidia.com",                                                 # NVIDIA NGC web / redirects
+    "authn.nvidia.com",                                               # NVIDIA NGC authentication
+    "github.infra.cloudera.com",                                      # Cloudera internal GitHub Enterprise
+    "nodejs.org",                                                     # Node.js binaries (AI Studios / Agent Studio)
+    "iojs.org",                                                       # io.js binaries (legacy Node.js)
+    "pypi.org",                                                       # Python Package Index (pip install in Workbench)
+    "files.pythonhosted.org",                                         # PyPI package file hosting
+    "pypi.python.org",                                                # PyPI legacy hostname
+    "test.pypi.org",                                                  # Test PyPI index
+    "test-files.pythonhosted.org",                                    # Test PyPI package file hosting
+    "bedrock-runtime.ap-northeast-1.amazonaws.com",                   # AWS Bedrock runtime (AI Studios / Synthetic Data Studio)
+    "api.gradio.app",                                                 # Gradio API (model UI demos in Workbench)
   ]
 }
 
