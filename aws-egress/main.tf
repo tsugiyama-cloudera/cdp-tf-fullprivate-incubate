@@ -46,7 +46,9 @@ locals {
   proxy_private_ip        = coalesce(var.proxy_private_ip, cidrhost(var.egress_private_subnet_cidr, 4))
   mc_proxy_config_name = "${var.env_prefix}-egress-proxy"
   # Comma-separated, no spaces (Cloudera MC Proxy registration format).
-  # S3/STS/ECR bypass Squid and use VPC endpoints; external traffic uses HTTP_PROXY.
+  # Same-region S3/STS/ECR use VPC endpoints (no_proxy). Cross-region AWS (e.g. Starport
+  # prod-ap-southeast-1-starport-layer-bucket.s3.ap-southeast-1.amazonaws.com) must use Squid.
+  # Do not add blanket ".amazonaws.com" — it bypasses proxy for all AWS hosts including ap-southeast-1 S3.
   mc_proxy_no_proxy_hosts = join(",", concat(
     [
       "localhost",
@@ -56,7 +58,6 @@ locals {
       ".svc",
       ".cluster.local",
       ".cloudera.site",
-      ".amazonaws.com",
       ".s3.amazonaws.com",
       "s3.amazonaws.com",
       ".s3.${var.aws_region}.amazonaws.com",
