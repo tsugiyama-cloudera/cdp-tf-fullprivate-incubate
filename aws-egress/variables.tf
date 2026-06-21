@@ -111,6 +111,8 @@ variable "allowed_fqdns" {
     "github.infra.cloudera.com",                                      # Cloudera internal GitHub Enterprise
     "nodejs.org",                                                     # Node.js binaries (AI Studios / Agent Studio)
     "iojs.org",                                                       # io.js binaries (legacy Node.js)
+    "registry.npmjs.org",                                             # npm registry (OpenCode plugin install in Workbench)
+    "models.dev",                                                     # OpenCode model catalog API (https://models.dev/api.json)
     "pypi.org",                                                       # Python Package Index (pip install in Workbench)
     "files.pythonhosted.org",                                         # PyPI package file hosting
     "pypi.python.org",                                                # PyPI legacy hostname

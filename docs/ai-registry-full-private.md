@@ -213,11 +213,13 @@ kubectl get pods -n mlx
 
 ## 6. Step 4: Model Registry 手動 IRSA（Private Registry / Model Hub インポート前）
 
-Private AI Registry（`endpointPublicAccess: false`）では、Model Hub インポート時に Pod 内 `aws s3 cp` が **`Unable to locate credentials`** で失敗することがあります。CDP が `sa-cdsw-unprivileged` に IRSA を付与しない場合、**Knox パッチ後・インポート前**に次を実施します。
+Private AI Registry（`endpointPublicAccess: false`）では、Model Hub インポート時に Pod 内 `aws s3 cp` が **`Unable to locate credentials`** で失敗することがあります。CDP が IRSA を Pod に付与しない場合、**Knox パッチ後・インポート前**に次を実施します。
 
 **詳細手順（IAM ロール、OIDC プロバイダ、trust policy 更新、SA 注釈、`NO_PROXY` / `HOME=/tmp`、成功判定）:**
 
 → **[model-registry-irsa-full-private.md](model-registry-irsa-full-private.md)**
+
+`NO_PROXY` には **S3 / STS 向け CIDR・FQDN** に加え、Import 時に Job をスケジュールする **Kubernetes API（ClusterIP / Service CIDR）** も含めてください（§7 参照）。`.svc` のみでは `https://172.20.0.1:443` 宛て API 呼び出しが Squid 経由になり、Import **500** になることがあります。
 
 **成功判定の目安（EKS CloudShell）:**
 
@@ -256,7 +258,7 @@ NGC 向け FQDN は `aws-egress` の `allowed_fqdns` に含めます（[aws-egre
 □ AI Registry 作成（Private Cluster ON）
 □ terraform output knox_jvm_proxy_opts を控える
 □ EKS CloudShell: knox set env + model-registry-v2 restart
-□ 手動 IRSA（model-registry-irsa-full-private.md）— 新 Liftie ごとに OIDC / trust policy 更新
+□ 手動 IRSA（model-registry-irsa-full-private.md）— 新 Liftie ごとに OIDC / trust policy 更新、§7 NO_PROXY に K8s API 含む
 □ SOCKS: Model Hub /api/v2/models が 401 以外
 □ モデルインポート成功
 ```
@@ -269,6 +271,7 @@ NGC 向け FQDN は `aws-egress` の `allowed_fqdns` に含めます（[aws-egre
 | --- | --- |
 | Model Hub で Registry 選択時 **401** | DSE-48642。CloudShell で 5.5〜5.6 を実施 |
 | インポート **Unable to locate credentials** | [手動 IRSA 手順書](model-registry-irsa-full-private.md) |
+| インポート **500** / `172.20.0.1:443/.../jobs` **Forbidden** | [IRSA 手順書 §7](model-registry-irsa-full-private.md)：`NO_PROXY` に K8s API（ClusterIP / Service CIDR）不足 |
 | インポート **InvalidIdentityToken** | 同上 §5〜6（OIDC プロバイダ / trust policy の OIDC ID） |
 | `[Errno 30] Read-only file system`（`aws`） | 同上 §7（`HOME=/tmp`） |
 | Registry UI が開かない | SOCKS / `ingress_extra_cidrs_and_ports` の 443 |
@@ -321,3 +324,4 @@ EKS 操作は **CloudShell** を優先し、ローカル kubeconfig は参照用
 | 2026-06-03 | 手動 IRSA 手順書へのリンク・Step 4 追加 |
 | 2026-06-03 | MC Proxy No Proxy 前提・Inference 手順書リンク |
 | 2026-06-04 | §5.3: `list-model-registries` の正しいフィールド名（`serviceName`/`domain`）と `get-model-registry-kubeconfig` による `liftie-*` 取得 |
+| 2026-06-22 | §6: Import 500（K8s API Forbidden）と `NO_PROXY`（K8s ClusterIP / Service CIDR）の注意を追記 |
